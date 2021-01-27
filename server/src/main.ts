@@ -1,12 +1,11 @@
 import "./config.js";
-import express, { json, Response } from "express";
+import express, { Response } from "express";
 import session from "express-session";
 import pgSimple from "connect-pg-simple";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 import * as bot from "./bot.js";
 import { StatusCodes, getReasonPhrase } from "http-status-codes";
-import got from "got";
 import aw from "./util/async-wrap.js";
 import { Auth, authCode } from "./util/discord.js";
 
