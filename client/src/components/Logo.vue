@@ -1,6 +1,6 @@
 <template>
   <img
-    class="gmtc-logo"
+    class="gmtc-logo mx-auto"
     alt="Great Midwest Trivia Contest 56"
     src="../assets/gmtc56-logo.png"
   />

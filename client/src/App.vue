@@ -1,21 +1,20 @@
 <template>
-  <div id="app">
+  <v-app id="app">
     <StatusBar :status="status" />
     <Logo />
-    <Loading v-if="loading" />
-    <Main
-      v-else-if="loggedIn"
-      :user="user"
-      @status="setStatus"
-      @logout="logout"
+    <Login
+      v-if="loading || !loggedIn"
+      :loading="loading"
+      :loginUrl="loginUrl"
     />
-    <Login v-else :loginUrl="loginUrl" />
-  </div>
+    <Main v-else :user="user" @status="setStatus" @logout="logout" />
+  </v-app>
 </template>
 
 <script>
+import { VApp } from "vuetify/lib";
+
 import StatusBar from "@/components/StatusBar.vue";
-import Loading from "@/components/Loading.vue";
 import Login from "@/components/Login.vue";
 import Logo from "@/components/Logo.vue";
 import Main from "@/components/Main.vue";
@@ -25,8 +24,8 @@ import * as api from "./api";
 export default {
   name: "Home",
   components: {
+    VApp,
     StatusBar,
-    Loading,
     Login,
     Logo,
     Main,
@@ -59,8 +58,27 @@ export default {
         }, duration);
       }
     },
+    prefersDarkMode() {
+      return (
+        window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches
+      );
+    },
+    setColorScheme() {
+      this.$vuetify.theme.dark = this.prefersDarkMode();
+      console.log(
+        `Set color scheme to ${this.$vuetify.theme.dark ? "dark" : "light"}`
+      );
+    },
+    trackPreferredColorScheme() {
+      if (!window.matchMedia) return;
+      const darkMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+      darkMediaQuery.addEventListener("change", () => this.setColorScheme());
+      this.setColorScheme();
+    },
   },
   created() {
+    this.trackPreferredColorScheme();
     Promise.all([
       api.getLoginUrl().then(url => (this.loginUrl = url)),
       api.getUser().then(user => (this.user = user)),

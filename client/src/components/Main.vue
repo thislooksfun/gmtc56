@@ -1,18 +1,32 @@
 <template>
   <div class="hello">
-    <h1>Hello {{ user.name }} <button @click="logout">Log Out</button></h1>
+    <h1>
+      Hello {{ user.name }}
+      <v-btn color="error" @click="logout">
+        <v-icon left>mdi-logout</v-icon> Log Out
+      </v-btn>
+    </h1>
     <div class="controls">
-      <button v-if="inCall" @click="hangup">Hang up</button>
-      <button v-else @click="next">Next caller</button>
+      <v-btn v-if="inCall" color="error" @click="hangup">
+        <v-icon left>mdi-phone-off</v-icon> Hang up
+      </v-btn>
+      <v-btn v-else color="primary" @click="next">
+        <v-icon left>mdi-phone-in-talk</v-icon> Next caller
+      </v-btn>
     </div>
   </div>
 </template>
 
 <script>
+import { VBtn } from "vuetify/lib";
+
 import * as api from "../api";
 
 export default {
   name: "Main",
+  components: {
+    VBtn,
+  },
   props: {
     user: {
       type: Object,
