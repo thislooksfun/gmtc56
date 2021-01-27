@@ -65,6 +65,10 @@ app.get("/api/next", (req, res) => {
   // }
 });
 
+app.get("/api/login-url", (req, res) => {
+  apiRes(res, StatusCodes.OK, { url: discord.getLoginUrl() });
+});
+
 const port = process.env.PORT || 80;
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
