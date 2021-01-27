@@ -51,7 +51,13 @@ function close(userid: string) {
   if (ws) ws.close();
 }
 
+function send(userid: string, msg: string) {
+  const ws = sockets.get(userid);
+  if (ws) ws.send(msg);
+}
+
 export default {
   init,
   close,
+  send,
 };
