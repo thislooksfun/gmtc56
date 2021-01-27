@@ -8,6 +8,7 @@ import * as bot from "./bot.js";
 import { StatusCodes, getReasonPhrase } from "http-status-codes";
 import aw from "./util/async-wrap.js";
 import * as discord from "./util/discord.js";
+import { AnyObject } from "./util/any-object.js";
 
 const app = express();
 
@@ -22,8 +23,8 @@ declare module "express-session" {
   }
 }
 
-function apiRes(res: Response, code: StatusCodes) {
-  res.status(code).send({ code, message: getReasonPhrase(code) });
+function apiRes(res: Response, code: StatusCodes, data?: AnyObject) {
+  res.status(code).send({ code, message: getReasonPhrase(code), data });
 }
 
 const PGStore = pgSimple(session);
