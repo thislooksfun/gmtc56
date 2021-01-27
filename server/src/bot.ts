@@ -24,3 +24,7 @@ export async function next(userid: string) {
 export async function hangup(userid: string) {
   await msgOperator(`!su hup ${userid}`);
 }
+
+export function close() {
+  client.destroy();
+}

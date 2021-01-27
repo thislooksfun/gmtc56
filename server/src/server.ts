@@ -27,6 +27,7 @@ function apiRes(res: Response, code: StatusCodes, data?: AnyObject) {
   res.status(code).send({ code, message: getReasonPhrase(code), data });
 }
 
+let server: http.Server;
 export async function start() {
   const app = express();
 
@@ -116,7 +117,7 @@ export async function start() {
     })
   );
 
-  const server = http.createServer(app);
+  server = http.createServer(app);
   socket.init(server, sessionParser);
 
   const port = process.env.PORT || 80;
@@ -126,5 +127,13 @@ export async function start() {
       console.log(`Listening on port ${port}`);
       resolve();
     });
+  });
+}
+
+export async function stop() {
+  return new Promise<void>((res, rej) => {
+    if (!server) return res();
+    socket.closeServer();
+    server.close(e => (e ? rej(e) : res()));
   });
 }

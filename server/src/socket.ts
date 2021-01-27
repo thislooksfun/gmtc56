@@ -67,6 +67,11 @@ function close(userid: string) {
   if (ws) ws.close();
 }
 
+function closeServer() {
+  wss.close();
+  sockets.forEach(ws => ws.close());
+}
+
 function send(userid: string, msg: string) {
   const ws = sockets.get(userid);
   if (ws) ws.send(msg);
@@ -75,5 +80,6 @@ function send(userid: string, msg: string) {
 export default {
   init,
   close,
+  closeServer,
   send,
 };
