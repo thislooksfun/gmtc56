@@ -7,7 +7,7 @@ import { fileURLToPath } from "url";
 import * as bot from "./bot.js";
 import { StatusCodes, getReasonPhrase } from "http-status-codes";
 import aw from "./util/async-wrap.js";
-import { Auth, authCode } from "./util/discord.js";
+import * as discord from "./util/discord.js";
 
 const app = express();
 
@@ -18,7 +18,7 @@ const publicDir = path.join(__dirname, "../dist/public");
 // Add the user object to the session
 declare module "express-session" {
   interface SessionData {
-    auth?: Auth;
+    auth?: discord.Auth;
   }
 }
 
@@ -46,7 +46,7 @@ app.get(
     const code = req.query.code;
     if (code && typeof code === "string") {
       console.log(`Authenticating with code ${code}`);
-      req.session.auth = await authCode(code);
+      req.session.auth = await discord.auth(code);
       console.log(`Successfully authenticated with code ${code}`);
     }
     res.redirect("/");
