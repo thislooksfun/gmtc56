@@ -24,6 +24,17 @@ export interface User {
   username: string;
 }
 
+export function getLoginUrl(): String {
+  const params = {
+    client_id: clientID,
+    redirect_uri: redirectUri,
+    response_type: "code",
+    scope: authScopes,
+  };
+  const str = new URLSearchParams(params).toString();
+  return `${apiUrlPrefix}/oauth2/authorize?${str}`;
+}
+
 function headers(token?: string): AnyObject {
   if (token) {
     return { Authorization: `Bearer ${token}` };
@@ -75,17 +86,6 @@ export async function authCode(code: string): Promise<Auth> {
 // export async function getMe(token: string): Promise<User> {
 //   return apiGet("users/@me", {}, token);
 // }
-
-export function getLoginUrl(): String {
-  const params = {
-    client_id: clientID,
-    redirect_uri: redirectUri,
-    response_type: "code",
-    scope: authScopes,
-  };
-  const str = new URLSearchParams(params).toString();
-  return `${apiUrlPrefix}/oauth2/authorize?${str}`;
-}
 
 // export function getAvatarUrl(user: User) {
 //   const type = user.avatar.startsWith("a_") ? "gif" : "png";
