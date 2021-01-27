@@ -18,5 +18,5 @@ export async function msgOperator(msg: string) {
 }
 
 export async function next(userid: string) {
-  await msgOperator(`!su-next ${userid}`);
+  await msgOperator(`!su next ${userid}`);
 }
