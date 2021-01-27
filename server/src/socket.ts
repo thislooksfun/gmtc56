@@ -27,22 +27,38 @@ export function init(server: Server, sessionParser: RequestHandler) {
     });
   });
 
-  wss.on("connection", ws => {
+  wss.on("connection", (ws, req) => {
+    console.log(`Opening websocket...`);
+
     // @ts-ignore ;; Tie the socket to the user id for later access.
     const userid: string = req.session.auth!.userid;
 
+    const old = sockets.get(userid);
+    if (old) {
+      console.log(`Closing old websocket for user ${userid}`);
+      old.emit("offclose");
+      old.close();
+    }
+
     // Handle websocket lifecycle.
-    close(userid);
     sockets.set(userid, ws);
-    ws.on("close", () => sockets.delete(userid));
+
+    const onClose = () => {
+      console.log(`Websocket for user ${userid} closed`);
+      sockets.delete(userid);
+    };
+
+    const onMsg = (msg: WebSocket.Data) => {
+      console.log(`Got msg '${msg}'`);
+      ws.send("Hello");
+    };
+
+    ws.on("close", onClose);
+    ws.on("offclose", () => ws.off("close", onClose));
+    ws.on("message", onMsg);
 
     // TODO: Get startup status.
     console.log(`Opened websocket connection to user ${userid}`);
-
-    ws.on("message", msg => {
-      console.log(`Got msg '${msg}'`);
-      ws.send("Hello");
-    });
   });
 }
 
