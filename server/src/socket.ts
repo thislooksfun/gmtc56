@@ -4,6 +4,10 @@ import WebSocket from "ws";
 
 let wss: WebSocket.Server;
 export function init(server: Server, sessionParser: RequestHandler) {
+  if (wss != null) {
+    throw new Error("WebSocket Server already initalized!");
+  }
+
   wss = new WebSocket.Server({ clientTracking: false, noServer: true });
 
   wss.on("connection", ws => {
