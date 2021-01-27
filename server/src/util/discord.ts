@@ -1,7 +1,7 @@
 import got from "got";
 import { URLSearchParams } from "url";
+import { AnyObject } from "./any-object.js";
 
-type AnyObject = { [key: string]: any };
 const apiUrlPrefix = "https://discord.com/api/v8";
 
 const clientID = process.env.DISCORD_CLIENT_ID;
