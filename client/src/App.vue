@@ -1,43 +1,51 @@
 <template>
   <div id="app">
+    <Logo />
     <Loading v-if="loading" />
-    <Main v-else-if="loggedIn" />
-    <Login v-else :authUrl="authUrl" />
+    <Main v-else-if="loggedIn" :user="user" />
+    <Login v-else :loginUrl="loginUrl" />
   </div>
 </template>
 
 <script>
 import Loading from "@/components/Loading.vue";
 import Login from "@/components/Login.vue";
+import Logo from "@/components/Logo.vue";
 import Main from "@/components/Main.vue";
+import * as api from "./api";
 
 export default {
   name: "Home",
   components: {
     Loading,
     Login,
+    Logo,
     Main,
   },
   data() {
     return {
       loading: true,
-      loggedIn: false,
-      authUrl: "#hello",
+      loginUrl: null,
+      user: null,
     };
+  },
+  computed: {
+    loggedIn() {
+      return this.user != null;
+    },
   },
   methods: {
     logout() {
-      this.$store.commit("logout");
+      this.api.logout().then(() => {
+        this.user = null;
+      });
     },
   },
-  mounted() {
-    setTimeout(() => {
-      this.loading = false;
-
-      setTimeout(() => {
-        this.loggedIn = true;
-      }, 5000);
-    }, 1000);
+  created() {
+    Promise.all([
+      api.getLoginUrl().then(url => (this.loginUrl = url)),
+      api.getUser().then(user => (this.user = user)),
+    ]).then(() => (this.loading = false));
   },
 };
 </script>
@@ -48,7 +56,5 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
 }
 </style>

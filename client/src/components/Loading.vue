@@ -1,6 +1,6 @@
 <template>
-  <div class="loading">
-    <span>Loading...</span>
+  <div class="login">
+    <h1>Loading...</h1>
   </div>
 </template>
 
@@ -10,4 +10,4 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="less" scoped></style>
