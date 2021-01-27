@@ -47,9 +47,7 @@ app.get(
     if (code && typeof code === "string") {
       console.log(`Authenticating with code ${code}`);
       req.session.auth = await authCode(code);
-      console.log(
-        `Authenticated successfully: ${JSON.stringify(req.session.auth)}`
-      );
+      console.log(`Successfully authenticated with code ${code}`);
     }
     res.redirect("/");
   })

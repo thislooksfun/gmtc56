@@ -11,6 +11,16 @@ const authScopes = ["identify", "messages.read", "guilds"].join(" ");
 
 export interface Auth {
   token: string;
+  refreshToken: string;
+  scopes: string;
+}
+
+interface AuthResponse {
+  access_token: string;
+  expires_in: number;
+  refresh_token: string;
+  scope: string;
+  token_type: string;
 }
 
 export interface User {
@@ -71,7 +81,7 @@ async function apiPost<T>(
     .json<T>();
 }
 
-export async function authCode(code: string): Promise<Auth> {
+export async function auth(code: string): Promise<Auth> {
   const data = {
     client_id: clientID,
     client_secret: clientSecret,
@@ -80,7 +90,18 @@ export async function authCode(code: string): Promise<Auth> {
     redirect_uri: redirectUri,
     scope: authScopes,
   };
-  return apiPost("oauth2/token", data);
+  const auth: AuthResponse = await apiPost("oauth2/token", data);
+  if (auth.token_type !== "Bearer") {
+    throw new Error(
+      `Authentication returned invalid token type ${auth.token_type}`
+    );
+  }
+
+  return {
+    token: auth.access_token,
+    refreshToken: auth.refresh_token,
+    scopes: auth.scope,
+  };
 }
 
 // export async function getMe(token: string): Promise<User> {
