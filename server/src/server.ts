@@ -87,6 +87,9 @@ export async function start() {
       return apiRes(res, StatusCodes.OK);
     }
 
+    const id = req.session.auth?.userid;
+    if (id) socket.close(id);
+
     req.session.destroy(e => {
       if (e) return next(e);
       apiRes(res, StatusCodes.OK);
