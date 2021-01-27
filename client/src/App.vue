@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <StatusBar :status="status" />
     <Logo />
     <Loading v-if="loading" />
     <Main v-else-if="loggedIn" :user="user" />
@@ -8,15 +9,18 @@
 </template>
 
 <script>
+import StatusBar from "@/components/StatusBar.vue";
 import Loading from "@/components/Loading.vue";
 import Login from "@/components/Login.vue";
 import Logo from "@/components/Logo.vue";
 import Main from "@/components/Main.vue";
+
 import * as api from "./api";
 
 export default {
   name: "Home",
   components: {
+    StatusBar,
     Loading,
     Login,
     Logo,
@@ -27,6 +31,8 @@ export default {
       loading: true,
       loginUrl: null,
       user: null,
+      status: null,
+      statusTimeout: null,
     };
   },
   computed: {
@@ -39,6 +45,15 @@ export default {
       this.api.logout().then(() => {
         this.user = null;
       });
+    setStatus({ status, color, duration }) {
+      clearTimeout(this.statusTimeout);
+      this.status = { status, color };
+
+      if (duration > 0) {
+        this.statusTimeout = setTimeout(() => {
+          this.status = null;
+        }, duration);
+      }
     },
   },
   created() {
