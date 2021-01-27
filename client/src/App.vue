@@ -3,7 +3,12 @@
     <StatusBar :status="status" />
     <Logo />
     <Loading v-if="loading" />
-    <Main v-else-if="loggedIn" :user="user" />
+    <Main
+      v-else-if="loggedIn"
+      :user="user"
+      @status="setStatus"
+      @logout="logout"
+    />
     <Login v-else :loginUrl="loginUrl" />
   </div>
 </template>
@@ -42,9 +47,8 @@ export default {
   },
   methods: {
     logout() {
-      this.api.logout().then(() => {
-        this.user = null;
-      });
+      api.logout().then(() => (this.user = null));
+    },
     setStatus({ status, color, duration }) {
       clearTimeout(this.statusTimeout);
       this.status = { status, color };

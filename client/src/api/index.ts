@@ -9,10 +9,17 @@ interface ApiResponse<T> {
 export async function get<T>(path: string): Promise<ApiResponse<T>> {
   return await ky.get(path, { prefixUrl: "/api" }).json<ApiResponse<T>>();
 }
+export async function post<T>(path: string): Promise<ApiResponse<T>> {
+  return await ky.post(path, { prefixUrl: "/api" }).json<ApiResponse<T>>();
+}
 
 export async function getLoginUrl(): Promise<string> {
   const res = await get<{ url: string }>("login-url");
   return res.data.url;
+}
+
+export async function logout() {
+  return await post("logout");
 }
 
 interface User {
@@ -26,4 +33,16 @@ export async function getUser(): Promise<User | null> {
   } catch (e) {
     return null;
   }
+}
+
+export async function next(): Promise<void> {
+  await post("next");
+}
+export async function hangup(): Promise<void> {
+  await post("hangup");
+}
+
+export function openWebSocket() {
+  const protocol = location.protocol === "https" ? "wss" : "ws";
+  return new WebSocket(`${protocol}://${location.host}`);
 }
