@@ -9,7 +9,8 @@
     "start": "node dist/main.js",
     "build": "tsc",
     "clean": "rm -rf dist",
-    "clean-build": "npm run clean && npm run build"
+    "clean-build": "npm run clean && npm run build",
+    "deploy-start": "(cd .. && npm run deploy) && npm start"
   },
   "engines": {
     "node": ">= 14.0.0"
