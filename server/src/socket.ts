@@ -37,7 +37,7 @@ export function init(server: Server, sessionParser: RequestHandler) {
     ws.on("close", () => sockets.delete(userid));
 
     // TODO: Get startup status.
-    console.log("Got websocket connection!");
+    console.log(`Opened websocket connection to user ${userid}`);
 
     ws.on("message", msg => {
       console.log(`Got msg '${msg}'`);
