@@ -13,6 +13,7 @@ export interface Auth {
   token: string;
   refreshToken: string;
   scopes: string;
+  userid: string;
 }
 
 interface AuthResponse {
@@ -97,10 +98,13 @@ export async function auth(code: string): Promise<Auth> {
     );
   }
 
+  const { id } = await getMe(auth.access_token);
+
   return {
     token: auth.access_token,
     refreshToken: auth.refresh_token,
     scopes: auth.scope,
+    userid: id,
   };
 }
 

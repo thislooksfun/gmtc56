@@ -20,3 +20,7 @@ export async function msgOperator(msg: string) {
 export async function next(userid: string) {
   await msgOperator(`!su next ${userid}`);
 }
+
+export async function hangup(userid: string) {
+  await msgOperator(`!su hup ${userid}`);
+}
