@@ -69,6 +69,22 @@ app.get("/api/login-url", (req, res) => {
   apiRes(res, StatusCodes.OK, { url: discord.getLoginUrl() });
 });
 
+app.get(
+  "/api/me",
+  aw(async (req, res) => {
+    const token = req.session.auth?.token;
+    if (!token) {
+      return apiRes(res, StatusCodes.FORBIDDEN);
+    }
+
+    const me = await discord.getMe(token);
+    return apiRes(res, StatusCodes.OK, {
+      name: me.username,
+      avatar: discord.getAvatarUrl(me),
+    });
+  })
+);
+
 const port = process.env.PORT || 80;
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
