@@ -3,6 +3,8 @@ import { RequestHandler } from "express";
 import WebSocket from "ws";
 
 let wss: WebSocket.Server;
+const sockets = new Map<string, WebSocket>();
+
 export function init(server: Server, sessionParser: RequestHandler) {
   if (wss != null) {
     throw new Error("WebSocket Server already initalized!");
@@ -26,6 +28,14 @@ export function init(server: Server, sessionParser: RequestHandler) {
   });
 
   wss.on("connection", ws => {
+    // @ts-ignore ;; Tie the socket to the user id for later access.
+    const userid: string = req.session.auth!.userid;
+
+    // Handle websocket lifecycle.
+    close(userid);
+    sockets.set(userid, ws);
+    ws.on("close", () => sockets.delete(userid));
+
     // TODO: Get startup status.
     console.log("Got websocket connection!");
 
@@ -36,6 +46,12 @@ export function init(server: Server, sessionParser: RequestHandler) {
   });
 }
 
+function close(userid: string) {
+  const ws = sockets.get(userid);
+  if (ws) ws.close();
+}
+
 export default {
   init,
+  close,
 };
