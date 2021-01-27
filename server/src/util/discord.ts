@@ -104,11 +104,11 @@ export async function auth(code: string): Promise<Auth> {
   };
 }
 
-// export async function getMe(token: string): Promise<User> {
-//   return apiGet("users/@me", {}, token);
-// }
+export async function getMe(token: string): Promise<User> {
+  return apiGet("users/@me", {}, token);
+}
 
-// export function getAvatarUrl(user: User) {
-//   const type = user.avatar.startsWith("a_") ? "gif" : "png";
-//   return `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.${type}?size=4096`;
-// }
+export function getAvatarUrl(user: User) {
+  const type = user.avatar.startsWith("a_") ? "gif" : "png";
+  return `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.${type}?size=4096`;
+}
