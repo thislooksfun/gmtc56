@@ -1,0 +1,26 @@
+:root {
+  /* Discord colors */
+  --dc-burple: #7289da;
+  --dc-full-white: #ffffff;
+  --dc-greyple: #99aab5;
+  --dc-dark-but-not-black: #2c2f33;
+  --dc-not-quite-black: #23272a;
+  --dc-actually-black: #000000;
+
+  /* Light theme */
+  --background: var(--dc-full-white);
+  --foreground: var(--dc-not-quite-black);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Dark theme */
+    --background: var(--dc-dark-but-not-black);
+    --foreground: var(--dc-full-white);
+  }
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+}
