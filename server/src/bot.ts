@@ -3,7 +3,8 @@ import socket from "./socket.js";
 
 const client = new Discord.Client();
 const ipcChannelId = "803461225266151484";
-const operatorId = "799855360571736105";
+// const operatorId = "799855360571736105";
+const operatorId = "127448764783788034"; // TODO: Remove this
 
 export async function login(token?: string) {
   if (!token) throw new Error("Missing login token");
