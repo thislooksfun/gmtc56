@@ -31,7 +31,7 @@ export function init(server: Server, sessionParser: RequestHandler) {
     console.log(`Opening websocket...`);
 
     // @ts-ignore ;; Tie the socket to the user id for later access.
-    const userid: string = req.session.auth!.userid;
+    const userid: string = req.session.user!.id;
 
     const old = sockets.get(userid);
     if (old) {
