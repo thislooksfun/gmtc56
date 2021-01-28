@@ -12,10 +12,17 @@ import * as discord from "./util/discord.js";
 import { AnyObject } from "./util/any-object.js";
 import http from "http";
 import socket from "./socket.js";
+import gform from "./util/gform.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const publicDir = path.join(__dirname, "../dist/public");
+
+interface AnswerData {
+  qNum: number;
+  teamNum: number;
+  teamName: string;
+}
 
 // Add the user object to the session
 declare module "express-session" {
@@ -100,7 +107,10 @@ function apiRouter(): Router {
         return apiRes(res, StatusCodes.FORBIDDEN);
       }
 
-      // TODO: submit form to google
+      const { qNum, teamNum, teamName } = req.body as AnswerData;
+      const sig = `${user.username}#${user.discriminator} (${user.id})`;
+      await gform(qNum, teamNum, teamName, sig);
+
       apiRes(res, StatusCodes.OK);
     })
   );
