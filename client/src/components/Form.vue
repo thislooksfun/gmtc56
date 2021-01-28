@@ -45,6 +45,7 @@ import {
   VSpacer,
   VTextField,
 } from "vuetify/lib";
+import * as api from "../api";
 
 function isInteger(v) {
   if (typeof v === "string") v = parseInt(v);
@@ -83,11 +84,22 @@ export default {
       this.$refs.form.reset();
     },
     submitForm() {
-      const valid = this.$refs.form.validate();
-      if (!valid) return;
-
-      // TODO: Submit the form.
-      console.log(valid);
+      if (!this.$refs.form.validate()) return;
+      api
+        .recordAnswer(this.questionNumber, this.teamNumber, this.teamName)
+        .then(() => {
+          const qn = this.questionNumber;
+          this.$refs.form.reset();
+          this.questionNumber = qn;
+        })
+        .catch(e => {
+          console.error("Unable to submit form:", e);
+          this.$emit("status", {
+            status: "Unable to submit form",
+            color: "error",
+            duration: 5000,
+          });
+        });
     },
   },
 };

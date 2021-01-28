@@ -92,6 +92,19 @@ function apiRouter(): Router {
     })
   );
 
+  router.post(
+    "/record-answer",
+    aw(async (req, res) => {
+      const user = req.session.user;
+      if (!user) {
+        return apiRes(res, StatusCodes.FORBIDDEN);
+      }
+
+      // TODO: submit form to google
+      apiRes(res, StatusCodes.OK);
+    })
+  );
+
   return router;
 }
 

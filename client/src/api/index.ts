@@ -47,6 +47,14 @@ export async function hangup(): Promise<void> {
   await post("hangup");
 }
 
+export async function recordAnswer(
+  qNum: number,
+  teamNum: number,
+  teamName: string
+): Promise<void> {
+  await post("record-answer", { qNum, teamNum, teamName });
+}
+
 export function openWebSocket() {
   const protocol = location.protocol === "https" ? "wss" : "ws";
   return new WebSocket(`${protocol}://${location.host}`);
