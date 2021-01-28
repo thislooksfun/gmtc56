@@ -37,6 +37,7 @@ export default {
   data() {
     return {
       ws: null,
+      authorized: false,
       tmLog: [],
     };
   },
@@ -61,14 +62,59 @@ export default {
 
       this.ws.onopen = () => {
         this.setStatus("Connected", "success", 1500);
+        api.info();
       };
       this.ws.onmessage = e => {
+        try {
+          this.processSocketMessage(e.data);
+        } catch (e) {
+          console.log("Unable to process websocket message", e.data);
+        }
       };
       this.ws.onclose = () => {
         this.ws = null;
         this.setStatus("Disconnected", "error", -1);
         setTimeout(() => this.openSocket(), 5000);
       };
+    },
+    processSocketMessage(sm) {
+      const { type, data } = JSON.parse(sm);
+      switch (type) {
+        case "unauthorized":
+          // The user is not allowed to use this app, force them to logout.
+          // NOTE: This is _horrible_ from a security standpoint, but it's good
+          //       enough for this app's threat model.
+          this.logout();
+          break;
+        case "su-reply":
+          this.processSuReply(data);
+          break;
+        case "tm-message":
+          this.processTmMessage(data);
+          break;
+        case "phone-connected":
+          this.$refs.phone.connected(data);
+          break;
+        case "phone-disconnected":
+          this.$refs.phone.disconnected(data.user);
+          break;
+        default:
+          console.log(`Unknown socket message type ${type} (data: ${data})`);
+      }
+    },
+    processSuReply({ to, msg }) {
+      switch (to) {
+        case "info":
+          this.authorized = true;
+          this.$refs.phone.initialize(msg);
+          break;
+        default:
+          console.log(`Unknown su reply type ${to} (msg: ${msg})`);
+      }
+    },
+    processTmMessage(data) {
+      if (!this.authorized) return;
+      this.tmLog.push(data);
     },
   },
   created() {
