@@ -1,6 +1,7 @@
 import "./config.js";
 import express, { Response, Router } from "express";
 import session from "express-session";
+import bodyParser from "body-parser";
 import pgSimple from "connect-pg-simple";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
@@ -29,6 +30,7 @@ function apiRes(res: Response, code: StatusCodes, data?: AnyObject) {
 
 function apiRouter(): Router {
   const router = express.Router();
+  router.use(bodyParser.json());
 
   router.post(
     "/next",
