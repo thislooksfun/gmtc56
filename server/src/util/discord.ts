@@ -7,7 +7,7 @@ const apiUrlPrefix = "https://discord.com/api/v8";
 const clientID = process.env.DISCORD_CLIENT_ID;
 const clientSecret = process.env.DISCORD_CLIENT_SECRET;
 const redirectUri = process.env.DISCORD_REDIRECT_URI;
-const authScopes = ["identify", "messages.read", "guilds"].join(" ");
+const authScopes = ["identify"].join(" ");
 
 export interface Auth {
   token: string;
