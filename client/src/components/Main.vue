@@ -51,21 +51,32 @@ export default {
       this.$emit("logout");
     },
     openSocket() {
+      this.setStatus("Connecting...", "error", -1);
       this.ws = api.openWebSocket();
-      this.ws.onopen = () => this.setStatus("Connected", "success", 1500);
-      this.ws.onmessage = e => console.log("Got message!", e.data);
-      this.ws.onclose = () => {
+      if (!this.ws) {
         this.setStatus("Disconnected", "error", -1);
+        setTimeout(() => this.openSocket(), 5000);
+        return;
+      }
+
+      this.ws.onopen = () => {
+        this.setStatus("Connected", "success", 1500);
+      };
+      this.ws.onmessage = e => {
+      };
+      this.ws.onclose = () => {
         this.ws = null;
+        this.setStatus("Disconnected", "error", -1);
+        setTimeout(() => this.openSocket(), 5000);
       };
     },
   },
   created() {
-    this.setStatus("Connecting...", "error", -1);
     this.openSocket();
   },
   destroyed() {
     if (this.ws) {
+      delete this.ws.onclose;
       this.ws.close();
     }
   },
