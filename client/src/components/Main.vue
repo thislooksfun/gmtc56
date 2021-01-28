@@ -44,8 +44,11 @@ export default {
     };
   },
   methods: {
+    emitStatus(data) {
+      this.$emit("status", data);
+    },
     setStatus(status, color, duration = 5000) {
-      this.$emit("status", { status, color, duration });
+      this.emitStatus({ status, color, duration });
     },
     logout() {
       this.$emit("logout");
