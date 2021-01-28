@@ -7,7 +7,7 @@ const apiUrlPrefix = "https://discord.com/api/v8";
 const clientID = process.env.DISCORD_CLIENT_ID;
 const clientSecret = process.env.DISCORD_CLIENT_SECRET;
 const redirectUri = process.env.DISCORD_REDIRECT_URI;
-const authScopes = ["identify"].join(" ");
+const authScopes = ["identify"];
 
 export interface Auth {
   token: string;
@@ -39,7 +39,7 @@ export function getLoginUrl(): String {
     client_id: clientID,
     redirect_uri: redirectUri,
     response_type: "code",
-    scope: authScopes,
+    scope: authScopes.join(" "),
   };
   const str = new URLSearchParams(params).toString();
   return `${apiUrlPrefix}/oauth2/authorize?${str}`;
@@ -88,7 +88,7 @@ export async function auth(code: string): Promise<{ auth: Auth; user: User }> {
     grant_type: "authorization_code",
     code,
     redirect_uri: redirectUri,
-    scope: authScopes,
+    scope: authScopes.join(" "),
   };
   const auth: AuthResponse = await apiPost("oauth2/token", data);
   if (auth.token_type !== "Bearer") {
