@@ -8,6 +8,7 @@
     </h1>
     <PhoneState ref="phone"></PhoneState>
     <Form @status="emitStatus"></Form>
+    <TMLog :messages="tmLog"></TMLog>
   </div>
 </template>
 
@@ -15,6 +16,7 @@
 import { VBtn } from "vuetify/lib";
 import Form from "@/components/Form.vue";
 import PhoneState from "@/components/PhoneState.vue";
+import TMLog from "@/components/TMLog.vue";
 
 import * as api from "../api";
 
@@ -24,6 +26,7 @@ export default {
     VBtn,
     Form,
     PhoneState,
+    TMLog,
   },
   props: {
     user: {
@@ -34,6 +37,7 @@ export default {
   data() {
     return {
       ws: null,
+      tmLog: [],
     };
   },
   methods: {
