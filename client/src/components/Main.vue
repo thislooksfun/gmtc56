@@ -6,14 +6,7 @@
         <v-icon left>mdi-logout</v-icon> Log Out
       </v-btn>
     </h1>
-    <div class="controls">
-      <v-btn v-if="inCall" color="error" @click="hangup">
-        <v-icon left>mdi-phone-off</v-icon> Hang up
-      </v-btn>
-      <v-btn v-else color="primary" @click="next">
-        <v-icon left>mdi-phone-in-talk</v-icon> Next caller
-      </v-btn>
-    </div>
+    <PhoneState ref="phone"></PhoneState>
     <Form @status="emitStatus"></Form>
   </div>
 </template>
@@ -21,6 +14,7 @@
 <script>
 import { VBtn } from "vuetify/lib";
 import Form from "@/components/Form.vue";
+import PhoneState from "@/components/PhoneState.vue";
 
 import * as api from "../api";
 
@@ -29,6 +23,7 @@ export default {
   components: {
     VBtn,
     Form,
+    PhoneState,
   },
   props: {
     user: {
@@ -38,8 +33,6 @@ export default {
   },
   data() {
     return {
-      inCall: false,
-      message: null,
       ws: null,
     };
   },
@@ -52,15 +45,6 @@ export default {
     },
     logout() {
       this.$emit("logout");
-    },
-    hangup() {
-      api.hangup().then(() => (this.inCall = false));
-    },
-    next() {
-      api
-        .next()
-        .then(() => (this.inCall = true))
-        .catch(e => this.setStatus(e, "error"));
     },
     openSocket() {
       this.ws = api.openWebSocket();
