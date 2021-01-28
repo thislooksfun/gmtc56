@@ -140,7 +140,16 @@ export async function start() {
   app.use(sessionParser);
 
   app.use("/public", express.static(publicDir, { index: false }));
-  app.get("/", (req, res) => res.sendFile(path.join(publicDir, "index.html")));
+  app.get(
+    "/",
+    aw(async (req, res) => {
+      if (req.session.auth && !discord.checkScopes(req.session.auth)) {
+        await logout(req);
+      }
+
+      res.sendFile(path.join(publicDir, "index.html"));
+    })
+  );
 
   app.get(
     "/auth",
