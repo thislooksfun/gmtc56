@@ -77,9 +77,14 @@ function send(userid: string, type: string, data: any) {
   if (ws) ws.send(JSON.stringify({ type, data }));
 }
 
+function sendAll(type: string, data: any) {
+  sockets.forEach(ws => ws.send(JSON.stringify({ type, data })));
+}
+
 export default {
   init,
   close,
   closeServer,
   send,
+  sendAll,
 };
