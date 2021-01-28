@@ -1,5 +1,5 @@
 import "./config.js";
-import express, { Response, Router } from "express";
+import express, { Request, Response, Router } from "express";
 import session from "express-session";
 import bodyParser from "body-parser";
 import pgSimple from "connect-pg-simple";
@@ -36,6 +36,12 @@ function apiRes(res: Response, code: StatusCodes, data?: AnyObject) {
   res.status(code).send({ code, message: getReasonPhrase(code), data });
 }
 
+function logout(request: Request): Promise<void> {
+  return new Promise((res, rej) =>
+    request.session.destroy(e => (e ? rej(e) : res()))
+  );
+}
+
 function apiRouter(): Router {
   const router = express.Router();
   router.use(bodyParser.json());
@@ -66,18 +72,19 @@ function apiRouter(): Router {
     })
   );
 
-  router.post("/logout", (req, res, next) => {
-    if (!req.session) {
-      return apiRes(res, StatusCodes.OK);
-    }
+  router.post(
+    "/logout",
+    aw(async (req, res) => {
+      if (!req.session) {
+        return apiRes(res, StatusCodes.OK);
+      }
 
-    const id = req.session.user?.id;
-    req.session.destroy(e => {
+      const id = req.session.user?.id;
+      await logout(req);
       if (id) socket.close(id);
-      if (e) return next(e);
       apiRes(res, StatusCodes.OK);
-    });
-  });
+    })
+  );
 
   router.get("/login-url", (req, res) => {
     apiRes(res, StatusCodes.OK, { url: discord.getLoginUrl() });
