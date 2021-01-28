@@ -72,9 +72,9 @@ function closeServer() {
   sockets.forEach(ws => ws.close());
 }
 
-function send(userid: string, msg: string) {
+function send(userid: string, type: string, data: any) {
   const ws = sockets.get(userid);
-  if (ws) ws.send(msg);
+  if (ws) ws.send(JSON.stringify({ type, data }));
 }
 
 export default {
