@@ -46,6 +46,9 @@ export async function next(): Promise<void> {
 export async function hangup(): Promise<void> {
   await post("hangup");
 }
+export async function info(): Promise<void> {
+  await post("info");
+}
 
 export async function recordAnswer(
   qNum: number,
