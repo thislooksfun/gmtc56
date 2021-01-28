@@ -14,11 +14,13 @@
         <v-icon left>mdi-phone-in-talk</v-icon> Next caller
       </v-btn>
     </div>
+    <Form></Form>
   </div>
 </template>
 
 <script>
 import { VBtn } from "vuetify/lib";
+import Form from "@/components/Form.vue";
 
 import * as api from "../api";
 
@@ -26,6 +28,7 @@ export default {
   name: "Main",
   components: {
     VBtn,
+    Form,
   },
   props: {
     user: {
