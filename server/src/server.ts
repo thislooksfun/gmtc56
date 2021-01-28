@@ -73,6 +73,19 @@ function apiRouter(): Router {
   );
 
   router.post(
+    "/info",
+    aw(async (req, res) => {
+      const userid = req.session.user?.id;
+      if (!userid) {
+        return apiRes(res, StatusCodes.FORBIDDEN);
+      }
+
+      await bot.info(userid);
+      apiRes(res, StatusCodes.OK);
+    })
+  );
+
+  router.post(
     "/logout",
     aw(async (req, res) => {
       if (!req.session) {
