@@ -1,13 +1,15 @@
 <template>
   <v-app id="app">
-    <StatusBar :status="status" />
-    <Logo />
-    <Login
-      v-if="loading || !loggedIn"
-      :loading="loading"
-      :loginUrl="loginUrl"
-    />
-    <Main v-else :user="user" @status="setStatus" @logout="logout" />
+    <v-container>
+      <StatusBar :status="status" />
+      <Logo />
+      <Login
+        v-if="loading || !loggedIn"
+        :loading="loading"
+        :loginUrl="loginUrl"
+      />
+      <Main v-else :user="user" @status="setStatus" @logout="logout" />
+    </v-container>
   </v-app>
 </template>
 
