@@ -1,5 +1,5 @@
 import "./config.js";
-import express, { Response } from "express";
+import express, { Response, Router } from "express";
 import session from "express-session";
 import pgSimple from "connect-pg-simple";
 import path, { dirname } from "path";
@@ -25,6 +25,71 @@ declare module "express-session" {
 
 function apiRes(res: Response, code: StatusCodes, data?: AnyObject) {
   res.status(code).send({ code, message: getReasonPhrase(code), data });
+}
+
+function apiRouter(): Router {
+  const router = express.Router();
+
+  router.post(
+    "/next",
+    aw(async (req, res) => {
+      const userid = req.session.auth?.userid;
+      if (!userid) {
+        return apiRes(res, StatusCodes.FORBIDDEN);
+      }
+
+      await bot.next(userid);
+      apiRes(res, StatusCodes.OK);
+    })
+  );
+
+  router.post(
+    "/hangup",
+    aw(async (req, res) => {
+      const userid = req.session.auth?.userid;
+      if (!userid) {
+        return apiRes(res, StatusCodes.FORBIDDEN);
+      }
+
+      await bot.hangup(userid);
+      apiRes(res, StatusCodes.OK);
+    })
+  );
+
+  router.post("/logout", (req, res, next) => {
+    if (!req.session) {
+      return apiRes(res, StatusCodes.OK);
+    }
+
+    const id = req.session.auth?.userid;
+    req.session.destroy(e => {
+      if (id) socket.close(id);
+      if (e) return next(e);
+      apiRes(res, StatusCodes.OK);
+    });
+  });
+
+  router.get("/login-url", (req, res) => {
+    apiRes(res, StatusCodes.OK, { url: discord.getLoginUrl() });
+  });
+
+  router.get(
+    "/me",
+    aw(async (req, res) => {
+      const token = req.session.auth?.token;
+      if (!token) {
+        return apiRes(res, StatusCodes.FORBIDDEN);
+      }
+
+      const me = await discord.getMe(token);
+      return apiRes(res, StatusCodes.OK, {
+        name: me.username,
+        avatar: discord.getAvatarUrl(me),
+      });
+    })
+  );
+
+  return router;
 }
 
 let server: http.Server;
@@ -57,64 +122,7 @@ export async function start() {
     })
   );
 
-  app.post(
-    "/api/next",
-    aw(async (req, res) => {
-      const userid = req.session.auth?.userid;
-      if (!userid) {
-        return apiRes(res, StatusCodes.FORBIDDEN);
-      }
-
-      await bot.next(userid);
-      apiRes(res, StatusCodes.OK);
-    })
-  );
-
-  app.post(
-    "/api/hangup",
-    aw(async (req, res) => {
-      const userid = req.session.auth?.userid;
-      if (!userid) {
-        return apiRes(res, StatusCodes.FORBIDDEN);
-      }
-
-      await bot.hangup(userid);
-      apiRes(res, StatusCodes.OK);
-    })
-  );
-
-  app.post("/api/logout", (req, res, next) => {
-    if (!req.session) {
-      return apiRes(res, StatusCodes.OK);
-    }
-
-    const id = req.session.auth?.userid;
-    req.session.destroy(e => {
-      if (id) socket.close(id);
-      if (e) return next(e);
-      apiRes(res, StatusCodes.OK);
-    });
-  });
-
-  app.get("/api/login-url", (req, res) => {
-    apiRes(res, StatusCodes.OK, { url: discord.getLoginUrl() });
-  });
-
-  app.get(
-    "/api/me",
-    aw(async (req, res) => {
-      const token = req.session.auth?.token;
-      if (!token) {
-        return apiRes(res, StatusCodes.FORBIDDEN);
-      }
-
-      const me = await discord.getMe(token);
-      return apiRes(res, StatusCodes.OK, {
-        name: me.username,
-        avatar: discord.getAvatarUrl(me),
-      });
-    })
-  );
+  app.use("/api", apiRouter());
 
   server = http.createServer(app);
   socket.init(server, sessionParser);
