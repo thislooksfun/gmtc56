@@ -117,3 +117,16 @@ export function getAvatarUrl(user: User) {
   const type = user.avatar.startsWith("a_") ? "gif" : "png";
   return `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.${type}?size=4096`;
 }
+
+// Check to make sure the provided auth has the required scopes.
+export function checkScopes(auth: Auth) {
+  const scopes = new Set(auth.scopes.split(" "));
+
+  for (const scope of authScopes) {
+    if (!scopes.has(scope)) {
+      return false;
+    }
+  }
+
+  return true;
+}
