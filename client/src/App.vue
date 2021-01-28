@@ -68,9 +68,6 @@ export default {
     },
     setColorScheme() {
       this.$vuetify.theme.dark = this.prefersDarkMode();
-      console.log(
-        `Set color scheme to ${this.$vuetify.theme.dark ? "dark" : "light"}`
-      );
     },
     trackPreferredColorScheme() {
       if (!window.matchMedia) return;
