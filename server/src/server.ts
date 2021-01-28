@@ -21,6 +21,7 @@ const publicDir = path.join(__dirname, "../dist/public");
 declare module "express-session" {
   interface SessionData {
     auth?: discord.Auth;
+    user?: discord.User;
   }
 }
 
@@ -35,7 +36,7 @@ function apiRouter(): Router {
   router.post(
     "/next",
     aw(async (req, res) => {
-      const userid = req.session.auth?.userid;
+      const userid = req.session.user?.id;
       if (!userid) {
         return apiRes(res, StatusCodes.FORBIDDEN);
       }
@@ -48,7 +49,7 @@ function apiRouter(): Router {
   router.post(
     "/hangup",
     aw(async (req, res) => {
-      const userid = req.session.auth?.userid;
+      const userid = req.session.user?.id;
       if (!userid) {
         return apiRes(res, StatusCodes.FORBIDDEN);
       }
@@ -63,7 +64,7 @@ function apiRouter(): Router {
       return apiRes(res, StatusCodes.OK);
     }
 
-    const id = req.session.auth?.userid;
+    const id = req.session.user?.id;
     req.session.destroy(e => {
       if (id) socket.close(id);
       if (e) return next(e);
@@ -117,7 +118,9 @@ export async function start() {
       const code = req.query.code;
       if (code && typeof code === "string") {
         console.log(`Authenticating with code ${code}`);
-        req.session.auth = await discord.auth(code);
+        const { auth, user } = await discord.auth(code);
+        req.session.auth = auth;
+        req.session.user = user;
         console.log(`Successfully authenticated with code ${code}`);
       }
       res.redirect("/");
