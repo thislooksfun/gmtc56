@@ -1,5 +1,5 @@
 <template>
-  <div :class="['status-bar', stateClass]" :style="colors">
+  <div :class="['status-bar', stateClass, ...colorClasses]">
     {{ msg }}
   </div>
 </template>
@@ -20,18 +20,9 @@ export default {
     msg() {
       return this.status ? this.status.status : "- No Status -";
     },
-    colors() {
-      const c = this.status ? this.status.color : "other";
-      switch (c) {
-        case "success":
-          return "background-color: #292; color: #fff";
-        case "error":
-          return "background-color: #822; color: #fff";
-        case "other":
-        default:
-          // #838?
-          return "background-color: #52f; color: #fff";
-      }
+    colorClasses() {
+      const c = this.status ? this.status.color : "accent";
+      return [c, "white--text"];
     },
   },
 };
@@ -43,6 +34,7 @@ export default {
   top: 0;
   left: 0;
   width: 100vw;
+  font-size: 1.25em;
   height: 1.6em;
   line-height: 1.6em;
 
