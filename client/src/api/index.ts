@@ -9,8 +9,13 @@ interface ApiResponse<T> {
 export async function get<T>(path: string): Promise<ApiResponse<T>> {
   return await ky.get(path, { prefixUrl: "/api" }).json<ApiResponse<T>>();
 }
-export async function post<T>(path: string): Promise<ApiResponse<T>> {
-  return await ky.post(path, { prefixUrl: "/api" }).json<ApiResponse<T>>();
+export async function post<T>(
+  path: string,
+  data?: unknown
+): Promise<ApiResponse<T>> {
+  return await ky
+    .post(path, { prefixUrl: "/api", json: data })
+    .json<ApiResponse<T>>();
 }
 
 export async function getLoginUrl(): Promise<string> {
