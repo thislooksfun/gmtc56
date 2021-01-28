@@ -6,7 +6,9 @@
     "build:client": "cd client && npm run clean-build",
     "build:server": "cd server && npm run clean-build",
     "deploy:client": "npm run build:client && rm -rf server/dist/public && mv client/dist server/dist/public",
-    "deploy": "npm run build:server && npm run deploy:client"
+    "deploy": "npm run build:server && npm run deploy:client",
+    "heroku-postbuild": "npm run deploy",
+    "start": "cd server && npm run start"
   },
   "dependencies": {},
   "devDependencies": {
