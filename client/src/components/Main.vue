@@ -14,7 +14,7 @@
         <v-icon left>mdi-phone-in-talk</v-icon> Next caller
       </v-btn>
     </div>
-    <Form></Form>
+    <Form @status="emitStatus"></Form>
   </div>
 </template>
 
