@@ -72,7 +72,11 @@ export default {
     trackPreferredColorScheme() {
       if (!window.matchMedia) return;
       const darkMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-      darkMediaQuery.addEventListener("change", () => this.setColorScheme());
+      if (darkMediaQuery.addEventListener) {
+        darkMediaQuery.addEventListener("change", () => this.setColorScheme());
+      } else if (darkMediaQuery.addListener) {
+        darkMediaQuery.addListener(() => this.setColorScheme());
+      }
       this.setColorScheme();
     },
   },
