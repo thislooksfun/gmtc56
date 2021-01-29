@@ -66,18 +66,18 @@ export default {
         window.matchMedia("(prefers-color-scheme: dark)").matches
       );
     },
-    setColorScheme() {
-      this.$vuetify.theme.dark = this.prefersDarkMode();
+    setDark(dark) {
+      this.$vuetify.theme.dark = !!dark;
     },
     trackPreferredColorScheme() {
       if (!window.matchMedia) return;
       const darkMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
       if (darkMediaQuery.addEventListener) {
-        darkMediaQuery.addEventListener("change", () => this.setColorScheme());
+        darkMediaQuery.addEventListener("change", e => this.setDark(e.matches));
       } else if (darkMediaQuery.addListener) {
-        darkMediaQuery.addListener(() => this.setColorScheme());
+        darkMediaQuery.addListener(e => this.setDark(e.matches));
       }
-      this.setColorScheme();
+      this.setDark(darkMediaQuery.matches);
     },
   },
   created() {
