@@ -78,6 +78,10 @@ export default {
       };
     },
     processSocketMessage(sm) {
+      if (sm === "exit") {
+        return this.destroySocket();
+      }
+
       const { type, data } = JSON.parse(sm);
       switch (type) {
         case "unauthorized":
@@ -116,15 +120,18 @@ export default {
       if (!this.authorized) return;
       this.tmLog.push(data);
     },
+    destroySocket() {
+      if (this.ws) {
+        delete this.ws.onclose;
+        this.ws.close();
+      }
+    },
   },
   created() {
     this.openSocket();
   },
-  destroyed() {
-    if (this.ws) {
-      delete this.ws.onclose;
-      this.ws.close();
-    }
+  beforeDestroy() {
+    this.destroySocket();
   },
 };
 </script>

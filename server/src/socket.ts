@@ -64,12 +64,18 @@ export function init(server: Server, sessionParser: RequestHandler) {
 
 function close(userid: string) {
   const ws = sockets.get(userid);
-  if (ws) ws.close();
+  if (ws) {
+    ws.send("exit");
+    ws.close();
+  }
 }
 
 function closeServer() {
   wss.close();
-  sockets.forEach(ws => ws.close());
+  sockets.forEach(ws => {
+    ws.send("exit");
+    ws.close();
+  });
 }
 
 function send(userid: string, type: string, data: any) {
