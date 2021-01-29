@@ -49,6 +49,7 @@ export function init(server: Server, sessionParser: RequestHandler) {
     const old = sockets.get(userid);
     if (old) {
       console.log(`Closing old websocket for user ${userid}`);
+      old.send("exit");
       old.emit("offclose");
       old.close();
     }
