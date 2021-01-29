@@ -38,6 +38,7 @@ export default {
     return {
       ws: null,
       authorized: false,
+      allowReopen: true,
       tmLog: [],
     };
   },
@@ -52,6 +53,8 @@ export default {
       this.$emit("logout");
     },
     openSocket() {
+      if (!this.allowReopen) return;
+
       this.setStatus("Connecting...", "error", -1);
       this.ws = api.openWebSocket();
       if (!this.ws) {
@@ -121,6 +124,7 @@ export default {
       this.tmLog.push(data);
     },
     destroySocket() {
+      this.allowReopen = false;
       if (this.ws) {
         delete this.ws.onclose;
         this.ws.close();
