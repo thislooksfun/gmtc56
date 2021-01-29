@@ -16,7 +16,7 @@ function heartbeat() {
     ws.ping();
   });
 }
-const pingInterval = setTimeout(heartbeat, 20000);
+const pingInterval = setInterval(heartbeat, 20000);
 
 export function init(server: Server, sessionParser: RequestHandler) {
   if (wss != null) {
