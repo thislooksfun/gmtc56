@@ -3,7 +3,20 @@ import { RequestHandler } from "express";
 import WebSocket from "ws";
 
 let wss: WebSocket.Server;
-const sockets = new Map<string, WebSocket>();
+const sockets = new Map<string, WebSocket & Living>();
+
+interface Living {
+  alive?: boolean;
+}
+
+function heartbeat() {
+  sockets.forEach(ws => {
+    if (!ws.alive) return ws.terminate();
+    ws.alive = false;
+    ws.ping();
+  });
+}
+const pingInterval = setTimeout(heartbeat, 20000);
 
 export function init(server: Server, sessionParser: RequestHandler) {
   if (wss != null) {
@@ -27,7 +40,7 @@ export function init(server: Server, sessionParser: RequestHandler) {
     });
   });
 
-  wss.on("connection", (ws, req) => {
+  wss.on("connection", (ws: WebSocket & Living, req) => {
     console.log(`Opening websocket...`);
 
     // @ts-ignore ;; Tie the socket to the user id for later access.
@@ -53,6 +66,8 @@ export function init(server: Server, sessionParser: RequestHandler) {
       ws.send("Hello");
     };
 
+    ws.alive = true;
+    ws.on("pong", () => (ws.alive = true));
     ws.on("close", onClose);
     ws.on("offclose", () => ws.off("close", onClose));
     ws.on("message", onMsg);
@@ -60,6 +75,8 @@ export function init(server: Server, sessionParser: RequestHandler) {
     // TODO: Get startup status.
     console.log(`Opened websocket connection to user ${userid}`);
   });
+
+  wss.on("close", () => clearInterval(pingInterval));
 }
 
 function close(userid: string) {
