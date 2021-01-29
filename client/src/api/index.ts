@@ -59,6 +59,6 @@ export async function recordAnswer(
 }
 
 export function openWebSocket() {
-  const protocol = location.protocol === "https" ? "wss" : "ws";
+  const protocol = location.protocol === "https:" ? "wss" : "ws";
   return new WebSocket(`${protocol}://${location.host}`);
 }
